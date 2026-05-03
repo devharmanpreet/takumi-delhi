@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Solarpunk Core</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <!-- Ambient bloom overlay -->
+    <div id="bloom-flash"></div>
+
+    <!-- Crosshair -->
+    <div id="crosshair"></div>
+
+    <!-- HUD -->
+    <div id="ui">
+
+      <!-- Shard counter -->
+      <div id="counter">
+        <span id="counter-label">Shards</span>
+        <div id="orb-pips"></div>
+        <span id="orb-fraction">0 / 7</span>
+      </div>
+
+      <!-- Prompt bar -->
+      <div id="prompt">
+        <div id="prompt-dot"></div>
+        <span id="prompt-text">Click to enter the world</span>
+        <div class="key-hints">
+          <span class="key">W</span>
+          <span class="key">A</span>
+          <span class="key">S</span>
+          <span class="key">D</span>
+          <span class="key">E</span>
+          <span class="key">🖱</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- HUD logic -->
+    <script>
+      (function () {
+        const TOTAL = 7;
+        const pipsContainer = document.getElementById('orb-pips');
+        const fractionEl    = document.getElementById('orb-fraction');
+        const promptEl      = document.getElementById('prompt-text');
+        const crosshair     = document.getElementById('crosshair');
+        const bloom         = document.getElementById('bloom-flash');
+
+        // Build pips dynamically
+        const pips = [];
+        for (let i = 0; i < TOTAL; i++) {
+          const pip = document.createElement('div');
+          pip.className = 'pip';
+          pipsContainer.appendChild(pip);
+          pips.push(pip);
+        }
+
+        let orbCount = 0;
+        let isLocked = false;
+
+        document.getElementById('prompt').addEventListener('click', () => {
+          if (!isLocked) document.body.requestPointerLock();
+        });
+
+        document.addEventListener('pointerlockchange', () => {
+          isLocked = !!document.pointerLockElement;
+          crosshair.classList.toggle('visible', isLocked);
+          if (isLocked && orbCount === 0) {
+            promptEl.textContent = '7 energy shards remain — seek the glow';
+          } else if (!isLocked && orbCount < TOTAL) {
+            promptEl.textContent = 'Click to re-enter the world';
+          }
+        });
+
+        window.collectOrb = function () {
+          if (orbCount >= TOTAL) return;
+          const pip = pips[orbCount];
+          pip.classList.add('collected', 'pop');
+          pip.addEventListener('animationend', () => pip.classList.remove('pop'), { once: true });
+          orbCount++;
+          fractionEl.textContent = orbCount + ' / ' + TOTAL;
+          if (orbCount === TOTAL) {
+            promptEl.textContent = 'All shards found — return to the Core and press E';
+            bloom.classList.remove('active');
+            void bloom.offsetWidth;
+            bloom.classList.add('active');
+          }
+        };
+
+        window.resetOrbs = function () {
+          orbCount = 0;
+          pips.forEach(p => p.classList.remove('collected', 'pop'));
+          fractionEl.textContent = '0 / ' + TOTAL;
+        };
+      })();
+    </script>
+
+    <!-- Game -->
+    <script src="main.js"></script>
+  </body>
+</html>
