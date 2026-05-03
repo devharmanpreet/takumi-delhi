@@ -1,10 +1,13 @@
-/* ─── Solarpunk Core · Humanized UI ─────────────────────────────── */
-
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700&display=swap');
 
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-html, body {
+html,
+body {
   margin: 0;
   width: 100%;
   height: 100%;
@@ -13,9 +16,11 @@ html, body {
   font-family: 'Nunito', sans-serif;
 }
 
-canvas { display: block; }
+canvas {
+  display: block;
+}
 
-/* ─── HUD Container ───────────────────────────────────────────────── */
+/* ─── HUD Container ────  */
 #ui {
   position: fixed;
   left: 20px;
@@ -28,7 +33,7 @@ canvas { display: block; }
   pointer-events: none;
 }
 
-/* ─── Shard Counter ───────────────────────────────────────────────── */
+/* ─── Shard Counter ──── */
 #counter {
   display: flex;
   align-items: center;
@@ -77,12 +82,24 @@ canvas { display: block; }
   transform: scale(1.2);
 }
 
-.pip.pop { animation: orbPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.pip.pop {
+  animation: orbPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
 
 @keyframes orbPop {
-  0%   { transform: scale(0.5); opacity: 0.4; }
-  60%  { transform: scale(1.4); }
-  100% { transform: scale(1.2); opacity: 1; }
+  0% {
+    transform: scale(0.5);
+    opacity: 0.4;
+  }
+
+  60% {
+    transform: scale(1.4);
+  }
+
+  100% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
 
 #orb-fraction {
@@ -95,7 +112,7 @@ canvas { display: block; }
   min-width: 32px;
 }
 
-/* ─── Prompt Bar ──────────────────────────────────────────────────── */
+/* ─── Prompt Bar ────── */
 #prompt {
   display: flex;
   align-items: center;
@@ -128,8 +145,17 @@ canvas { display: block; }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.45; transform: scale(0.78); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.45;
+    transform: scale(0.78);
+  }
 }
 
 #prompt-text {
@@ -141,7 +167,11 @@ canvas { display: block; }
   transition: color 0.4s;
 }
 
-.key-hints { display: flex; gap: 4px; flex-shrink: 0; }
+.key-hints {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
 
 .key {
   background: rgba(255, 255, 255, 0.07);
@@ -157,7 +187,7 @@ canvas { display: block; }
   line-height: 1.6;
 }
 
-/* ─── Crosshair ───────────────────────────────────────────────────── */
+/* ─── Crosshair ─────── */
 #crosshair {
   position: fixed;
   top: 50%;
@@ -171,7 +201,9 @@ canvas { display: block; }
   transition: opacity 0.4s;
 }
 
-#crosshair.visible { opacity: 1; }
+#crosshair.visible {
+  opacity: 1;
+}
 
 #crosshair::before,
 #crosshair::after {
@@ -181,10 +213,23 @@ canvas { display: block; }
   border-radius: 2px;
 }
 
-#crosshair::before { width: 2px; height: 100%; left: 50%; top: 0; transform: translateX(-50%); }
-#crosshair::after  { height: 2px; width: 100%; top: 50%; left: 0; transform: translateY(-50%); }
+#crosshair::before {
+  width: 2px;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
 
-/* ─── Bloom Flash ─────────────────────────────────────────────────── */
+#crosshair::after {
+  height: 2px;
+  width: 100%;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+/* ─── Bloom Flash ─────── */
 #bloom-flash {
   position: fixed;
   inset: 0;
@@ -195,16 +240,33 @@ canvas { display: block; }
   transition: opacity 0.2s;
 }
 
-#bloom-flash.active { animation: bloomFlash 2s ease-out forwards; }
-
-@keyframes bloomFlash {
-  0%   { opacity: 0; }
-  10%  { opacity: 1; }
-  100% { opacity: 0; }
+#bloom-flash.active {
+  animation: bloomFlash 2s ease-out forwards;
 }
 
-/* ─── Entrance animation ──────────────────────────────────────────── */
+@keyframes bloomFlash {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ─── Entrance animation ───────── */
 @keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

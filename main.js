@@ -1,6 +1,5 @@
-// ═══════════════════════════════════════════════════════════
-//  Solarpunk Core · Upgraded main.js
-// ═══════════════════════════════════════════════════════════
+//  Solarpunk Core
+
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x04090f);
@@ -18,7 +17,7 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.9;
 document.body.appendChild(renderer.domElement);
 
-// ── State ────────────────────────────────────────────────────
+// ── State ─────
 const keys = {};
 let yaw = 0, pitch = 0;
 let collected = 0;
@@ -26,7 +25,7 @@ let restored = false;
 let restoreProgress = 0; // 0→1 transition blend
 const WORLD_HALF = 38;
 
-// ── Lights ───────────────────────────────────────────────────
+// ── Lights ────
 const ambient = new THREE.AmbientLight(0x1a2a3a, 0.6);
 scene.add(ambient);
 
@@ -45,7 +44,7 @@ const coreLight = new THREE.PointLight(0x40c8ff, 1.6, 22);
 coreLight.position.set(0, 2.5, 0);
 scene.add(coreLight);
 
-// ── Helpers ──────────────────────────────────────────────────
+// ── Helpers ───
 function mesh(geo, mat, x, y, z, rx, ry, rz) {
   const m = new THREE.Mesh(geo, mat);
   m.position.set(x, y, z);
@@ -62,19 +61,19 @@ function group() {
   return g;
 }
 
-// ── Materials ────────────────────────────────────────────────
+// ── Materials ───
 const groundMat = new THREE.MeshStandardMaterial({ color: 0x0d1f18, roughness: 0.92, metalness: 0.0 });
 const darkMetal = new THREE.MeshStandardMaterial({ color: 0x1a2e38, roughness: 0.5, metalness: 0.4 });
-const rustMetal  = new THREE.MeshStandardMaterial({ color: 0x2a1f15, roughness: 0.8, metalness: 0.2 });
-const greenGlow  = new THREE.MeshStandardMaterial({ color: 0x1a5c3a, emissive: 0x04200e, emissiveIntensity: 0.8 });
+const rustMetal = new THREE.MeshStandardMaterial({ color: 0x2a1f15, roughness: 0.8, metalness: 0.2 });
+const greenGlow = new THREE.MeshStandardMaterial({ color: 0x1a5c3a, emissive: 0x04200e, emissiveIntensity: 0.8 });
 const mossyStone = new THREE.MeshStandardMaterial({ color: 0x243d2a, roughness: 0.95 });
-const glassMat   = new THREE.MeshStandardMaterial({ color: 0x20404a, emissive: 0x061418, roughness: 0.3, metalness: 0.6, transparent: true, opacity: 0.82 });
+const glassMat = new THREE.MeshStandardMaterial({ color: 0x20404a, emissive: 0x061418, roughness: 0.3, metalness: 0.6, transparent: true, opacity: 0.82 });
 
 const coreMat = new THREE.MeshStandardMaterial({
   color: 0x0d3b4b, emissive: 0x0b7ea0, emissiveIntensity: 0.7, metalness: 0.3, roughness: 0.2
 });
 
-// ── Ground ───────────────────────────────────────────────────
+// ── Ground ────
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(120, 120, 40, 40), groundMat);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
@@ -87,7 +86,7 @@ gridHelper.material.transparent = true;
 gridHelper.material.opacity = 0.18;
 scene.add(gridHelper);
 
-// ── Central Core ─────────────────────────────────────────────
+// ── Central Core ───
 const core = mesh(new THREE.SphereGeometry(1.3, 40, 28), coreMat, 0, 1.6, 0);
 // Outer ring
 const ringGeo = new THREE.TorusGeometry(2.0, 0.08, 12, 80);
@@ -103,7 +102,7 @@ for (let i = 0; i < 6; i++) {
   mesh(new THREE.CylinderGeometry(0.07, 0.1, 1.2, 8), darkMetal, Math.cos(a) * 1.7, 0.6, Math.sin(a) * 1.7);
 }
 
-// ── Energy Shards ─────────────────────────────────────────────
+// ── Energy Shards ───
 // Crystal shard shape: tall narrow octahedron + elongated tip
 function makeShardMesh() {
   const g = new THREE.Group();
@@ -157,12 +156,12 @@ function makeShardMesh() {
 
 const shardPositions = [
   [-14, 0, -10],
-  [ 16, 0,  -8],
-  [  2, 0,  18],
-  [-18, 0,  14],
-  [ 20, 0,  10],
-  [ -8, 0, -22],
-  [ 12, 0,  22],
+  [16, 0, -8],
+  [2, 0, 18],
+  [-18, 0, 14],
+  [20, 0, 10],
+  [-8, 0, -22],
+  [12, 0, 22],
 ];
 
 const shards = shardPositions.map(([x, , z]) => {
@@ -172,28 +171,28 @@ const shards = shardPositions.map(([x, , z]) => {
   return g;
 });
 
-// ── Renewable Energy Sources ──────────────────────────────────
+// ── Renewable Energy Sources ──
 
-const renewableGroups = []; // { group, type, powered, beamLine, turbineBlades? }
+const renewableGroups = [];
 
-// — Wind Turbines —
+
 function makeWindTurbine(x, z) {
   const g = new THREE.Group();
   scene.add(g);
   g.position.set(x, 0, z);
 
-  // Tower
+
   const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.22, 8, 10), darkMetal);
   tower.position.y = 4;
   tower.castShadow = true;
   g.add(tower);
 
-  // Nacelle (hub housing)
+
   const nacelle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.35, 0.9), darkMetal);
   nacelle.position.y = 8.18;
   g.add(nacelle);
 
-  // Blade hub
+
   const hub = new THREE.Group();
   hub.position.set(0, 8.18, 0.5);
   g.add(hub);
@@ -217,7 +216,6 @@ function makeWindTurbine(x, z) {
   led.position.set(0, 8.38, 0.55);
   g.add(led);
 
-  // Beam (powered connection, hidden by default)
   const beamMat = new THREE.LineBasicMaterial({ color: 0x40ffaa, transparent: true, opacity: 0 });
   const beamGeo = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(x, 8.2, z),
@@ -229,7 +227,7 @@ function makeWindTurbine(x, z) {
   renewableGroups.push({ group: g, type: 'wind', powered: false, hub, ledMat, beam, beamMat });
 }
 
-// — Solar Panels —
+
 function makeSolarArray(x, z, angle) {
   const g = new THREE.Group();
   scene.add(g);
@@ -300,12 +298,12 @@ function makeBioDome(x, z) {
   scene.add(g);
   g.position.set(x, 0, z);
 
-  // Base ring
+
   const base = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 2.0, 0.3, 24), mossyStone);
   base.position.y = 0.15;
   g.add(base);
 
-  // Dome glass
+
   const domeMat = new THREE.MeshStandardMaterial({
     color: 0x103820,
     emissive: 0x021408,
@@ -320,7 +318,6 @@ function makeBioDome(x, z) {
   dome.position.y = 0.28;
   g.add(dome);
 
-  // Dome ribs (structure lines)
   const ribMat = new THREE.MeshStandardMaterial({ color: 0x1a3025, metalness: 0.5, roughness: 0.6 });
   for (let i = 0; i < 8; i++) {
     const a = (i / 8) * Math.PI * 2;
@@ -355,18 +352,18 @@ function makeBioDome(x, z) {
 
 // Place renewable sources
 makeWindTurbine(-22, -12);
-makeWindTurbine( 26,  -6);
+makeWindTurbine(26, -6);
 makeWindTurbine(-10, -28);
-makeWindTurbine( 24,  20);
+makeWindTurbine(24, 20);
 
-makeSolarArray(-18, 8,  0.3);
-makeSolarArray( 18, -18, -0.5);
-makeSolarArray(  8,  28,  0.1);
-makeSolarArray(-28, -22,  0.8);
+makeSolarArray(-18, 8, 0.3);
+makeSolarArray(18, -18, -0.5);
+makeSolarArray(8, 28, 0.1);
+makeSolarArray(-28, -22, 0.8);
 
-makeBioDome( 14, 12);
+makeBioDome(14, 12);
 makeBioDome(-20, 18);
-makeBioDome(  6, -26);
+makeBioDome(6, -26);
 
 // ── Terrain Details ───────────────────────────────────────────
 
@@ -385,7 +382,7 @@ const rockSpots = [
 ];
 rockSpots.forEach(([x, y, z]) => makeRock(x, y, z, 0.3 + Math.random() * 0.5));
 
-// Mossy pillars / ruins
+
 const ruinPositions = [
   [-10, 0, 14], [12, 0, -16], [-24, 0, 4], [22, 0, -22],
   [-16, 0, -16], [18, 0, 24], [-8, 0, -30], [30, 0, 14],
@@ -393,13 +390,15 @@ const ruinPositions = [
 ruinPositions.forEach(([x, , z]) => {
   const h = 1.5 + Math.random() * 3;
   mesh(new THREE.CylinderGeometry(0.3, 0.4, h, 8), mossyStone, x, h / 2, z,
-       0, Math.random() * Math.PI, 0);
+    0, Math.random() * Math.PI, 0);
+
+
   // Glowing moss cap
   const capMat = new THREE.MeshStandardMaterial({ color: 0x1a4a28, emissive: 0x041808, emissiveIntensity: 0.6 });
   mesh(new THREE.SphereGeometry(0.35, 8, 6), capMat, x, h + 0.1, z);
 });
 
-// Antenna towers (6 around core)
+
 for (let i = 0; i < 6; i++) {
   const a = (i / 6) * Math.PI * 2;
   const r = 10;
@@ -414,7 +413,7 @@ for (let i = 0; i < 6; i++) {
   blink.userData.isBlink = true;
 }
 
-// Distant mountain silhouettes (large low-poly cones far out)
+
 for (let i = 0; i < 10; i++) {
   const a = (i / 10) * Math.PI * 2;
   const r = 60 + Math.random() * 20;
@@ -425,13 +424,13 @@ for (let i = 0; i < 10; i++) {
   mesh(geo, mat, x, h / 2, z);
 }
 
-// ── Particles ────────────────────────────────────────────────
+// ── Particles ─────
 const particleCount = 280;
 const particleGeo = new THREE.BufferGeometry();
 const pPos = new Float32Array(particleCount * 3);
 const pSpeeds = new Float32Array(particleCount);
 for (let i = 0; i < particleCount; i++) {
-  pPos[i * 3]     = (Math.random() - 0.5) * 80;
+  pPos[i * 3] = (Math.random() - 0.5) * 80;
   pPos[i * 3 + 1] = Math.random() * 7 + 0.3;
   pPos[i * 3 + 2] = (Math.random() - 0.5) * 80;
   pSpeeds[i] = 0.08 + Math.random() * 0.18;
@@ -441,7 +440,7 @@ const particleMat = new THREE.PointsMaterial({ color: 0x50c8ff, size: 0.07, tran
 const particles = new THREE.Points(particleGeo, particleMat);
 scene.add(particles);
 
-// ── Restore World ────────────────────────────────────────────
+// ── Restore World ───
 function restoreWorld() {
   restored = true;
 
@@ -487,7 +486,7 @@ function restoreWorld() {
 function powerUpRenewable(r) {
   r.powered = true;
 
-  // Green LED on
+  // green LED on
   r.ledMat.color.set(0x00ff44);
   r.ledMat.emissive.set(0x00ff44);
   r.ledMat.emissiveIntensity = 3.0;
@@ -507,7 +506,7 @@ function powerUpRenewable(r) {
   }
 }
 
-// ── UI Updates ───────────────────────────────────────────────
+// ── UI updates ───
 function updateUI() {
   const fractionEl = document.getElementById('orb-fraction');
   if (fractionEl) fractionEl.textContent = collected + ' / ' + shards.length;
@@ -530,14 +529,13 @@ function updateUI() {
   }
 }
 
-// ── Input ────────────────────────────────────────────────────
+// ── Input ────
 addEventListener('keydown', (e) => {
   keys[e.code] = true;
   if (e.code === 'KeyE' && collected >= shards.length
-      && !restored && camera.position.distanceTo(core.position) < 3.5) {
+    && !restored && camera.position.distanceTo(core.position) < 3.5) {
     restoreWorld();
     if (window.collectOrb) {
-      // Trigger remaining pips if needed
     }
   }
 });
@@ -545,7 +543,7 @@ addEventListener('keyup', (e) => (keys[e.code] = false));
 
 document.addEventListener('mousemove', (e) => {
   if (!document.pointerLockElement) return;
-  yaw   -= e.movementX * 0.0022;
+  yaw -= e.movementX * 0.0022;
   pitch -= e.movementY * 0.0022;
   pitch = Math.max(-1.3, Math.min(1.3, pitch));
 });
@@ -556,7 +554,6 @@ addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight);
 });
 
-// ── Orb collection counter (sync with index.html HUD) ────────
 let _lastCollected = 0;
 function syncHUDOrbs(n) {
   if (typeof window.collectOrb !== 'function') return;
@@ -566,14 +563,14 @@ function syncHUDOrbs(n) {
   }
 }
 
-// ── Animate ──────────────────────────────────────────────────
+// ── Animate ─────
 const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
 
   const dt = Math.min(clock.getDelta(), 0.05);
-  const t  = clock.elapsedTime;
+  const t = clock.elapsedTime;
 
   // Camera
   camera.rotation.order = 'YXZ';
@@ -658,6 +655,8 @@ function animate() {
   }
   particles.geometry.attributes.position.needsUpdate = true;
   particles.rotation.y += dt * 0.018;
+
+
 
   updateUI();
   renderer.render(scene, camera);
